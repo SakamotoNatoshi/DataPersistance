@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
+    public GameObject dataHandlerGO;
+    
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
@@ -24,6 +26,10 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (DataHandler.Instance == null)
+        {
+            Instantiate(dataHandlerGO, transform.position, transform.rotation);
+        }
         bestScore = DataHandler.Instance.bestScore;
         username = DataHandler.Instance.username;
         BestScoreText.text = $"Score : {bestScore} " + $" Name : {username}";

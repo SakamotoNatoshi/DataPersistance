@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public class DataHandler : MonoBehaviour
@@ -18,17 +21,58 @@ public class DataHandler : MonoBehaviour
         
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        
+        LoadUserData();
     }
     
-    // Start is called before the first frame update
-    void Start()
+    [System.Serializable]
+    class SaveData
     {
-        
+        public string username;
+        public int bestScore;
+    }
+    
+    public void SaveUserData()
+    {
+        SaveData data = new SaveData();
+        data.username = username;
+        data.bestScore = bestScore;
+
+        string json = JsonUtility.ToJson(data);
+  
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+    
+    public void LoadUserData()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            username = data.username;
+            bestScore = data.bestScore;
+            
+            Debug.Log("File exists.");
+        }
+        else
+        {
+            Debug.Log("File does not exist.");
+        }
+    }
+    
+    public void Exit()
+    {
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+#else
+        Application.Quit(); // original code to quit Unity player
+#endif
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnApplicationQuit()
     {
-        
+        SaveUserData();
     }
 }

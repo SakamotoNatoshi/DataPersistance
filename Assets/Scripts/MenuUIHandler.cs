@@ -1,30 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MenuUIHandler : MonoBehaviour
 {
+    public TextMeshProUGUI bestScoreText;
     public void NameInput(string s)
     {
-        DataHandler.Instance.username = s;
-        // Debug.Log("Username defined as: " + s);
+        if (DataHandler.Instance != null)
+        {
+            DataHandler.Instance.username = s;
+            Debug.Log("Username defined as: " + s);
+        }
     }
     
     public void StartNew()
     {
         SceneManager.LoadScene(1);
     }
-    
-    public void Exit()
+
+    private void Start()
     {
-        // DataHandler.Instance.SaveName();
-        
-#if UNITY_EDITOR
-        EditorApplication.ExitPlaymode();
-#else
-        Application.Quit(); // original code to quit Unity player
-#endif
+        if (DataHandler.Instance != null)
+        {
+            bestScoreText.text = "Best Score: " + DataHandler.Instance.bestScore;
+        }
     }
 }
